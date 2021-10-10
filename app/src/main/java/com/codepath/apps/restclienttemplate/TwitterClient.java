@@ -34,11 +34,7 @@ public class TwitterClient extends OAuthBaseClient {
 	public static final String REST_CALLBACK_URL_TEMPLATE = "intent://%s#Intent;action=android.intent.action.VIEW;scheme=%s;package=%s;S.browser_fallback_url=%s;end";
 
 	public TwitterClient(Context context) {
-		super(context, REST_API_INSTANCE,
-				REST_URL,
-				REST_CONSUMER_KEY,
-				REST_CONSUMER_SECRET,
-				null,  // OAuth2 scope, null for OAuth1
+		super(context, REST_API_INSTANCE, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, null,  // OAuth2 scope, null for OAuth1
 				String.format(REST_CALLBACK_URL_TEMPLATE, context.getString(R.string.intent_host),
 						context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
 	}
@@ -60,6 +56,14 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("count", 25);
 		params.put("max_id", maxId);
 		client.get(apiUrl, params, handler);
+	}
+
+	public void publishTweet(String tweetContent, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/update.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("status", tweetContent);
+		client.post(apiUrl, params,"", handler);
 	}
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
